@@ -8,9 +8,10 @@ export class CreateUserDTO {
 
   @ApiProperty()
   @IsNotEmpty()
-  password: string;
-
+  email: string;
+  
   @ApiProperty()
   @IsNotEmpty()
-  email: string;
+  password: string;
+
 }
