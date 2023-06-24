@@ -1,0 +1,47 @@
+version: '3.7'
+services:
+  postgres-db:
+    container_name: nestjs-auth-postgres
+    image: postgres:alpine
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=nestjs-auth
+    logging:
+        options:
+          max-size: 10m
+          max-file: "3"
+    volumes:
+      - './postgres-data/volume/bk:/bk'
+      - './postgres-data/volume/data:/var/lib/postgresql/data'
+    networks:
+      - network-nestjs-auth
+  server:
+    container_name: nestjs-auth-server
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/usr/src/app/
+      - /usr/src/app/node_modules
+    ports:
+      - '3000:3000'
+      - '5173:5173'
+    environment:
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    depends_on:
+      - postgres-db
+    links:
+      - postgres-db
+    networks:
+      - network-nestjs-auth
+volumes:
+  postgres-data:
+networks:
+  network-nestjs-auth:
+    driver: bridge
