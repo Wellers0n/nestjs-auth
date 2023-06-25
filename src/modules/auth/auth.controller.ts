@@ -1,45 +1,39 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Post,
-  Request,
-  UseGuards,
-} from '@nestjs/common';
-import { AuthGuard } from './auth.guard';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginBodyDTO } from './dtos/login-body.dto';
+import { RegisterBodyDTO } from './dtos/register-body.dto';
 import {
-  ApiBearerAuth,
+  ApiConflictResponse,
   ApiOkResponse,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import {
-  LoginResponse200DTO,
-  LoginResponse401DTO,
-} from './dtos/login-response.dto';
+  AuthUnauthorizedResponse,
+  AuthOkResponse,
+  AuthConflictResponse,
+} from './swagger/auth.swagger';
 
 @Controller('auth')
 @ApiTags('Session')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @ApiOkResponse({ type: LoginResponse200DTO })
-  @ApiUnauthorizedResponse({ type: LoginResponse401DTO })
+  @ApiOkResponse({ type: AuthOkResponse })
+  @ApiUnauthorizedResponse({ type: AuthUnauthorizedResponse })
   @HttpCode(HttpStatus.OK)
   @Post('login')
   signIn(@Body() body: LoginBodyDTO) {
     const { email, password } = body;
-    return this.authService.signIn(email, password);
+    return this.authService.signIn({ email, password });
   }
 
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth()
-  @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
+  @ApiOkResponse({ type: AuthOkResponse })
+  @ApiConflictResponse({ type: AuthConflictResponse })
+  @HttpCode(HttpStatus.OK)
+  @Post('register')
+  getProfile(@Body() body: RegisterBodyDTO) {
+    const { email, password, name } = body;
+    return this.authService.register({ name, email, password });
   }
 }
