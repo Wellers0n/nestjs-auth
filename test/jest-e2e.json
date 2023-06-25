@@ -6,6 +6,6 @@
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
   },
-  "setupFilesAfterEnv": ["./prisma-test-environment.ts"],
+  "setupFilesAfterEnv": ["./e2e-test-environment.ts"],
   "moduleNameMapper": { "^@/(.*)$": "<rootDir>/../src/$1" }
 }
