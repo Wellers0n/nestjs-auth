@@ -34,6 +34,8 @@ $ yarn install
 
 ## Running docker-compose
 
+you need to run docker-compose to run integration tests
+
 ```bash
 $ docker-compose up --build -d
 
