@@ -19,8 +19,27 @@ services:
       - './postgres-data/volume/data:/var/lib/postgresql/data'
     networks:
       - network-nestjs-auth
+  postgres-test-db:
+    container_name: postgres-test-db
+    image: postgres:alpine
+    restart: always
+    ports:
+      - 5433:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=docker
+      - POSTGRES_DB=e2e_test
+    logging:
+        options:
+          max-size: 10m
+          max-file: "3"
+    networks:
+      - network-test-db
+    
 volumes:
   postgres-data:
 networks:
   network-nestjs-auth:
+    driver: bridge
+  network-test-db:
     driver: bridge

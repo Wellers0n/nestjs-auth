@@ -1,8 +1,8 @@
 FROM node:18
 
-EXPOSE 3000
-
 EXPOSE 5432
+
+EXPOSE 5433
 
 # Create app directory
 WORKDIR /usr/src/app
