@@ -19,7 +19,7 @@ import { AuthGuard } from '../auth/auth.guard';
 import {
   UserOkResponse,
   UserUnauthorizedResponse,
-} from './swagger/response.swagger';
+} from './swagger/users.swagger';
 
 @Controller('users')
 @ApiTags('Users')
