@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/database/prismaServices';
+import { PrismaService } from '@/database/prismaServices';
 import * as bcrypt from 'bcryptjs';
 import { UserEntity } from './entities/user.entity';
 
