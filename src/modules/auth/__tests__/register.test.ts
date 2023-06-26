@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../../../app.module';
 
@@ -12,6 +12,7 @@ describe('AppController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    app.useGlobalPipes(new ValidationPipe());
     await app.init();
   });
 
@@ -19,8 +20,8 @@ describe('AppController (e2e)', () => {
     const response = await request(app.getHttpServer())
       .post('/auth/register')
       .send({
-        name: 'mourinho',
-        email: 'mourinho@admin.com',
+        name: 'admin',
+        email: 'admin@admin.com',
         password: 'admin',
       });
 
@@ -29,18 +30,74 @@ describe('AppController (e2e)', () => {
     expect(response.body.access_token).toBeTruthy();
   });
 
+  it('/auth/register (POST) without name', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/auth/register')
+      .send({
+        // name: 'admin',
+        email: 'admin@admin.com',
+        password: 'admin',
+      });
+
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toEqual(['name should not be empty']);
+    expect(response.body.access_token).toBeFalsy();
+  });
+
+  it('/auth/register (POST) without email', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/auth/register')
+      .send({
+        name: 'admin',
+        // email: 'admin@admin.com',
+        password: 'admin',
+      });
+
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toEqual(['email must be an email']);
+    expect(response.body.access_token).toBeFalsy();
+  });
+
+  it('/auth/register (POST) invalid email', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/auth/register')
+      .send({
+        name: 'admin',
+        email: 'admin',
+        password: 'admin',
+      });
+
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toEqual(['email must be an email']);
+    expect(response.body.access_token).toBeFalsy();
+  });
+
+  it('/auth/register (POST) without password', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/auth/register')
+      .send({
+        name: 'admin',
+        email: 'admin@admin.com',
+        // password: 'admin',
+      });
+
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toEqual(['password should not be empty']);
+    expect(response.body.access_token).toBeFalsy();
+  });
+
   it('/auth/register (POST) conflitc', async () => {
     await request(app.getHttpServer()).post('/auth/register').send({
-      name: 'mourinho',
-      email: 'mourinho@admin.com',
+      name: 'admin',
+      email: 'admin@admin.com',
       password: 'admin',
     });
 
     const response = await request(app.getHttpServer())
       .post('/auth/register')
       .send({
-        name: 'mourinho',
-        email: 'mourinho@admin.com',
+        name: 'admin',
+        email: 'admin@admin.com',
         password: 'admin',
       });
 
