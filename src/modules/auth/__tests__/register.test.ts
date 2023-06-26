@@ -28,4 +28,24 @@ describe('AppController (e2e)', () => {
     expect(response.body.message).toBe('Registrado com sucesso');
     expect(response.body.access_token).toBeTruthy();
   });
+
+  it('/auth/register (POST) conflitc', async () => {
+    await request(app.getHttpServer()).post('/auth/register').send({
+      name: 'mourinho',
+      email: 'mourinho@admin.com',
+      password: 'admin',
+    });
+
+    const response = await request(app.getHttpServer())
+      .post('/auth/register')
+      .send({
+        name: 'mourinho',
+        email: 'mourinho@admin.com',
+        password: 'admin',
+      });
+
+    expect(response.statusCode).toBe(409);
+    expect(response.body.message).toBe('Conflict');
+    expect(response.body.access_token).toBeFalsy();
+  });
 });
