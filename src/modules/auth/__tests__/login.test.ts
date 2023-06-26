@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../../../app.module';
 
@@ -12,6 +12,8 @@ describe('Auth login (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    app.useGlobalPipes(new ValidationPipe());
+
     await app.init();
 
     await request(app.getHttpServer()).post('/auth/register').send({
@@ -22,7 +24,6 @@ describe('Auth login (e2e)', () => {
   });
 
   it('/auth/login (POST)', async () => {
-
     const response = await request(app.getHttpServer())
       .post('/auth/login')
       .send({
@@ -35,9 +36,7 @@ describe('Auth login (e2e)', () => {
     expect(response.body.access_token).toBeTruthy();
   });
 
-  it('/auth/login (POST) Unauthorized', async () => {
-    
-
+  it('/auth/login (POST) password incorrect', async () => {
     const response = await request(app.getHttpServer())
       .post('/auth/login')
       .send({
@@ -45,8 +44,47 @@ describe('Auth login (e2e)', () => {
         password: 'ad',
       });
 
-    expect(response.statusCode).toBe(401);
-    expect(response.body.message).toBe('Unauthorized');
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toBe('Email or password incorrect');
+    expect(response.body.access_token).toBeFalsy();
+  });
+
+  it('/auth/login (POST) invalid email', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send({
+        email: 'admin',
+        password: 'admin',
+      });
+
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toEqual(['email must be an email']);
+    expect(response.body.access_token).toBeFalsy();
+  });
+
+  it('/auth/login (POST) without email', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send({
+        // email: 'admin',
+        password: 'admin',
+      });
+
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toEqual(['email must be an email']);
+    expect(response.body.access_token).toBeFalsy();
+  });
+
+  it('/auth/login (POST) without password', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send({
+        email: 'admin@admin.com',
+        // password: 'admin',
+      });
+
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toEqual(['password should not be empty']);
     expect(response.body.access_token).toBeFalsy();
   });
 });
