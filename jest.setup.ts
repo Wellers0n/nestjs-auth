@@ -11,6 +11,14 @@ beforeAll(async () => {
   );
 });
 
+beforeEach(async () => {
+  execSync(
+    `export DATABASE_URL=${process.env.DATABASE_TEST_URL} && npx prisma migrate reset -f`,
+    { stdio: 'inherit' },
+  );
+})
+
+
 afterAll(async () => {
   const client = new Client({
     connectionString: process.env.DATABASE_TEST_URL,
