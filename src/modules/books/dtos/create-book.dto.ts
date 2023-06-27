@@ -18,5 +18,5 @@ export class CreateBookBodyDTO {
 export class CreateBookDataDTO {
   title: string;
   description: string;
-  user_id?: number;
+  user_id: number;
 }

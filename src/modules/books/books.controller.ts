@@ -52,7 +52,7 @@ export class BooksController {
   // @ApiUnauthorizedResponse({ type: UserUnauthorizedResponse })
 
   create(@Body() body: CreateBookBodyDTO): Promise<BookEntity> {
-    const { title, description, user_id = null } = body;
+    const { title, description, user_id  } = body;
     return this.booksService.create({ title, description, user_id });
   }
 }
