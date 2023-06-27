@@ -1,6 +1,9 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Query, UseGuards } from '@nestjs/common';
 import { BooksService } from './books.service';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { AuthGuard } from '../auth/auth.guard';
+import { FindBookQueryDTO } from './dtos/find-book.dto';
+import { BookEntity } from './entities/book.entity';
 
 @Controller('books')
 @ApiTags('Books')
@@ -8,7 +11,12 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 export class BooksController {
   constructor(private readonly booksService: BooksService) {}
   @Get()
-  get(): string {
-    return 'hello world';
+  @HttpCode(HttpStatus.OK)
+  // @ApiOkResponse({ type: UserOkResponse })
+  // @ApiUnauthorizedResponse({ type: UserUnauthorizedResponse })
+  @UseGuards(AuthGuard)
+  findByEmail(@Query() query: FindBookQueryDTO): Promise<BookEntity[]> {
+    const { title } = query;
+    return this.booksService.find({ title });
   }
 }
