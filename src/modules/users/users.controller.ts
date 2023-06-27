@@ -28,6 +28,7 @@ import {
 import { FindOneUserParamDTO } from './dtos/find-one-user.dto';
 import { UpdateUserBodyDTO, UpdateUserParamDTO } from './dtos/update-user.dto';
 import { FindUserQueryDTO } from './dtos/find-user.dto';
+import { DeleteUserParamDTO } from './dtos/delete-user.dto';
 
 @Controller('users')
 @ApiTags('Users')
@@ -84,7 +85,7 @@ export class UsersController {
   @ApiOkResponse()
   @ApiUnauthorizedResponse({ type: UserUnauthorizedResponse })
   @UseGuards(AuthGuard)
-  delete(@Param() param: UpdateUserParamDTO): Promise<void> {
+  delete(@Param() param: DeleteUserParamDTO): Promise<void> {
     const { id } = param;
     return this.usersService.delete({ id: Number(id) });
   }

@@ -3,7 +3,7 @@ import { IsEmail, IsNotEmpty } from 'class-validator';
 
 export class UpdateBookBodyDTO {
   @ApiProperty()
-  @IsEmail()
+  @IsNotEmpty()
   title: string;
 
   @ApiProperty()
