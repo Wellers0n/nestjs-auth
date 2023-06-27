@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@/database/prismaServices';
 import { BookEntity } from './entities/book.entity';
 
@@ -11,6 +11,14 @@ export class BookRepository {
     description: string,
     user_id?: number,
   ): Promise<BookEntity> {
+    const userExist = await this.prisma.user.findFirst({
+      where: {
+        id: user_id,
+      },
+    });
+
+    if (!userExist) throw new NotFoundException('User does not exist!');
+
     return this.prisma.book.create({
       data: {
         title,

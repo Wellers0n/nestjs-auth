@@ -46,6 +46,9 @@ export class UserRepository {
       where: {
         id,
       },
+      include: {
+        books: true,
+      },
     });
   }
 
