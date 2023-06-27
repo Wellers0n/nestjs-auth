@@ -9,7 +9,7 @@ export class BookRepository {
   async create(
     title: string,
     description: string,
-    user_id: number,
+    user_id?: number,
   ): Promise<BookEntity> {
     return this.prisma.book.create({
       data: {
