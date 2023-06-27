@@ -1,8 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { IsEmail } from 'class-validator';
 
-export class FindByEmailUserDTO {
+export class FindByEmailUserQueryDTO {
   @ApiProperty()
-  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+}
+
+export class FindByEmailUserDataDTO {
   email: string;
 }
