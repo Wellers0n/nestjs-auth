@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
 
-export class FindOneUserParamDTO {
+export class DeleteUserParamDTO {
   @ApiProperty()
   @IsNotEmpty()
   id: number;
 }
 
-export class FindOneUserDataDTO {
+export class DeleteUserDataDTO {
   id: number;
 }

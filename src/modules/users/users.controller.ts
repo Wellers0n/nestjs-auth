@@ -1,9 +1,14 @@
 import {
   Body,
   Controller,
+  Delete,
+  Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
+  Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -13,13 +18,16 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { CreateUserDTO } from './dtos/create-user.dto';
+import { CreateUserBodyDTO } from './dtos/create-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { AuthGuard } from '../auth/auth.guard';
 import {
   UserOkResponse,
   UserUnauthorizedResponse,
 } from './swagger/users.swagger';
+import { FindOneUserParamDTO } from './dtos/find-one-user.dto';
+import { UpdateUserBodyDTO, UpdateUserParamDTO } from './dtos/update-user.dto';
+import { FindUserQueryDTO } from './dtos/find-user.dto';
 
 @Controller('users')
 @ApiTags('Users')
@@ -32,8 +40,52 @@ export class UsersController {
   @ApiOkResponse({ type: UserOkResponse })
   @ApiUnauthorizedResponse({ type: UserUnauthorizedResponse })
   @UseGuards(AuthGuard)
-  create(@Body() body: CreateUserDTO): Promise<UserEntity> {
+  create(@Body() body: CreateUserBodyDTO): Promise<UserEntity> {
     const { name, email, password } = body;
     return this.usersService.create({ name, email, password });
+  }
+
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({ type: UserOkResponse })
+  @ApiUnauthorizedResponse({ type: UserUnauthorizedResponse })
+  @UseGuards(AuthGuard)
+  findByEmail(@Query() query: FindUserQueryDTO): Promise<UserEntity[]> {
+    const { email, name } = query;
+    return this.usersService.find({ email, name });
+  }
+
+  @Get(':id')
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({ type: UserOkResponse })
+  @ApiUnauthorizedResponse({ type: UserUnauthorizedResponse })
+  @UseGuards(AuthGuard)
+  findById(@Param() param: FindOneUserParamDTO): Promise<UserEntity> {
+    const { id } = param;
+    return this.usersService.findOne({ id: Number(id) });
+  }
+
+  @Put(':id')
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({ type: UserOkResponse })
+  @ApiUnauthorizedResponse({ type: UserUnauthorizedResponse })
+  @UseGuards(AuthGuard)
+  update(
+    @Param() param: UpdateUserParamDTO,
+    @Body() body: UpdateUserBodyDTO,
+  ): Promise<UserEntity> {
+    const { id } = param;
+    const { name, email } = body;
+    return this.usersService.update({ id: Number(id), name, email });
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse()
+  @ApiUnauthorizedResponse({ type: UserUnauthorizedResponse })
+  @UseGuards(AuthGuard)
+  delete(@Param() param: UpdateUserParamDTO): Promise<void> {
+    const { id } = param;
+    return this.usersService.delete({ id: Number(id) });
   }
 }
