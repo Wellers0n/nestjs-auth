@@ -8,14 +8,8 @@ export class FindBookQueryDTO {
   @IsOptional()
   @IsNotEmpty()
   title: string;
-
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @IsNotEmpty()
-  deescription: string;
 }
 
 export class FindBookDataDTO {
   title: string;
-  description: string;
 }
